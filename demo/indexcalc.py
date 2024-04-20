@@ -1,6 +1,6 @@
 import requests
 
-def fetch_nutrient_data(api_key, food_query):
+def fetch_nutrient_data(api_key, food_query, target_description):
     base_url = "https://api.nal.usda.gov/fdc/v1/foods/search"
     params = {
         "query": food_query,
@@ -14,20 +14,25 @@ def fetch_nutrient_data(api_key, food_query):
     }
     response = requests.get(base_url, params=params)
     if response.status_code == 200:
-        return response.json()
+        foods_data = response.json().get('foods', [])
+        target_food = next((food for food in foods_data if food['description'] == target_description), None)
+        return target_food
     else:
         return None
 
-def extract_nutrients(food_data):
-    if food_data and 'foods' in food_data:
-        for food in food_data['foods']:
-            print(f"Description: {food['description']}")
-            for nutrient in food['foodNutrients']:
-                if nutrient['nutrientName'] in ['Carbohydrate, by difference', 'Total Sugars', 'Fiber, total dietary']:
-                    print(f"{nutrient['nutrientName']}: {nutrient['value']} {nutrient['unitName']}")
-            print("-" * 50)
+def extract_nutrients(food):
+    if food:
+        print(f"Description: {food['description']}")
+        for nutrient in food['foodNutrients']:
+            if nutrient['nutrientName'] in ['Carbohydrate, by difference', 'Total Sugars', 'Fiber, total dietary']:
+                print(f"{nutrient['nutrientName']}: {nutrient['value']} {nutrient['unitName']}")
+        print("-" * 50)
+    else:
+        print("No matching food found.")
 
 api_key = 'lDuSAPE57aS7jR78F5VNgXC0ETYI7CbPj9qfvCqH'
 food_query = 'cheddar cheese'
-food_data = fetch_nutrient_data(api_key, food_query)
-extract_nutrients(food_data)
+target_description = "MILD CHEDDAR SHREDDED CHEDDAR CHEESE WITH CREAM CHEESE, MILD CHEDDAR"
+
+specific_food = fetch_nutrient_data(api_key, food_query, target_description)
+extract_nutrients(specific_food)
