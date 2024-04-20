@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "GI Analyzer",
+  "name": "NutriOwl",
   "description": "Test application - to fetch and dump info as a raw format",
   "version": "1.0",
   "action": {
     "default_popup": "index.html",
-    "default_icon": "favicon.png"
+    "default_icon": "assets/favicon.png"
   }
 }
