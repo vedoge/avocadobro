@@ -52,7 +52,7 @@ async function findNutrients(api_key,reply) {
 		sortOrder: "asc",
 	};
 	const uri = "https://api.nal.usda.gov/fdc/v1/foods/search";
-	paramstr = new URLSearchParams (params); 
+	paramstr = new URLSearchParams (parameter); 
 	reqstr = uri.concat("?",`api_key=${api_key}`,"&",paramstr);
 	console.log(reqstr);
 	var response = await fetch(reqstr,{method:"GET"});
