@@ -12,7 +12,7 @@ async function fetchNutrientData(apiKey, foodQuery, partialDescription) {
 	});
 }
 
-function getFoodData(api_key, params) {								//params is a key:value list
+async function getFoodData(api_key, params) {								//params is a key:value list
 	/*
 	const req = new XMLHttpRequest();
 	const uri = "https://api.nal.usda.gov/fdc/v1/foods/search";
@@ -34,26 +34,48 @@ function getFoodData(api_key, params) {								//params is a key:value list
 	paramstr = new URLSearchParams (params); 
 	reqstr = uri.concat("?",`api_key=${api_key}`,"&",paramstr);
 	console.log(reqstr);
-	let response = "";
-	fetch(reqstr,{method:"GET"}).then((req) => {
-			response = req.json();
-		}).catch((req) => {
-			console.log(req.json());
-		});
-	console.log(response.json);
-	//Need to select an entry from the provided JSON, extract its nutrient values, and store them as an object. 
+	var response = await fetch(reqstr,{method:"GET"});
+	results = await response.json();
+	console.log(results);
+	//select 1st entry by default 
+	var carbs, fibre, sodium, sugars, fats, energy;
+	var gi, gl;
+	let serving = results.foods[0].servingSize / (results.foods[0].servingSizeUnit === "g" ? 1 : 250);	//account for the fact that some serving sizes are given in cups (Not very common)
+	for (const nutrient of results.food[0].foodNutrients) {
+		if (nutrient.nutrientName.includes("Carbohydrate")) {
+			carbs = nutrient.value;									//this one is in grams
+		}
+		else if(nutrient.nutrientName.includes("lipid")) {
+			fats = nutrient.value;									
+		}
+		else if(nutrient.nutrientName.includes("Fiber")) {
+			fibre = nutrient.value;
+		}
+		else if(nutrient.nutrientName.includes("Na")) {
+			sodium = nutrient.value/ 1000;							//mg -> grams
+		}
+		else if (nutrient.nutrientName.toLowerCase().includes("sugar")) {
+			sugars = nutrient.value;							//grams
+		}
+		else if (nutrient.nutrientName.toLowerCase().includes("energy")) {
+			energy = nutrient.value;
+		}
+	}
+	gi = ((carbs - fibre)* 70 + (sugars)*30)/carbs;
+	gl = (gi*carbs)/100;
+    
+//Need to select an entry from the provided JSON, extract its nutrient values, and store them as an object. 
 }
 let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
-/*
+
 let parameter = {
-	query: "cheddar cheese", 
+	query: "wholemeal bread", 
 	dataType: "Branded",
-	pageSize: 25,
-	pageNumber: 2,
+	pageSize: 1,
+	pageNumber: 1,
 	sortBy: "dataType.keyword",
 	sortOrder: "asc",
-	brandOwner: "Kar Nut Products Company"
 };
 getFoodData(key, parameter);
-*/
+
 
