@@ -1,0 +1,118 @@
+// some initialisation work - message listener
+// (TODO)  the information is then passed back here where it inserts its div into the message box. 
+
+async function getProductname() {
+	var productNameElement = document.querySelector('#titleSection #productTitle');
+	var productName = productNameElement ? productNameElement.innerText.trim() : "Product name not found on the webpage.";
+	return productName;
+}
+	// Create and insert a box with text after the title section if titleSection exists
+	// nutrientInfo is to be calculated in fetch.js after it receives nutritional values from the database. 
+function setInfoBox(nutrientInfo) {
+	var boxText = `This product has a <strong>glycaemic index</strong> of <strong>${nutrientInfo.glycaemicIndex}</strong> and a <strong>glycaemic load</strong> of <strong>${nutrientInfo.glycaemicLoad}</strong>. This may result in a <strong>${nutrientInfo.glycaemicIndex > 50 ? "high" : "mild"}blood sugar spike</strong>. You have to run for <strong>${nutrientInfo.energy/(1.225*7)}minutes</strong> to expend these calories.<br><br><em>Disclaimer:</em> We are not medical professionals. Please consult a doctor before making any dietary changes.`;
+
+	var box = document.createElement('div');
+	box.classList.add('info-box'); // Add the class to the box
+
+	box.style.cssText = 'background-color: rgba(0,0,0,0); border-radius: 10px; padding: 10px; font-family: \'Roboto\', sans-serif; font-size: 16px; box-shadow: 0 4px 4px -4px black; border: 2px solid rgba(237, 237, 158, 0.8);';
+
+	var image = document.createElement('img');
+	image.src = 'https://github.com/vedoge/avocadobro/assets/95768353/bb228f66-8804-4c5d-b535-f2b2cbef08ab'; 
+	image.style.cssText = 'width: 50px; height: 50px; margin-right: 10px; float: left;';
+	box.appendChild(image);
+
+	var paragraph = document.createElement('p');
+	paragraph.innerHTML = boxText; // Use innerHTML to render HTML markup
+	box.appendChild(paragraph);
+	
+	var titleSection = document.getElementById('titleSection');
+	if (titleSection) {
+		titleSection.appendChild(box);
+	} else {
+		console.error("Product container not found on the webpage.");
+	}
+}
+// health risks/reccomendation based on glycemic index (simplified)
+function interpretHealthRisks(glycemicIndex) {
+  if (glycemicIndex >= 70) {
+    return " This is high and may contribute to health issues if consumed regularly.";
+  } else if (glycemicIndex >= 55 && glycemicIndex < 70) {
+    return " This is moderate and should be consumed with caution.";
+  } else {
+    return " This is low and is safe for consumption.";
+  }
+}
+async function findNutrients(api_key,reply) {
+	let parameter = {
+		query: reply.name, 
+		dataType: "Branded",
+		pageSize: 1,
+		pageNumber: 1,
+		sortBy: "dataType.keyword",
+		sortOrder: "asc",
+	};
+	const uri = "https://api.nal.usda.gov/fdc/v1/foods/search";
+	paramstr = new URLSearchParams (params); 
+	reqstr = uri.concat("?",`api_key=${api_key}`,"&",paramstr);
+	console.log(reqstr);
+	var response = await fetch(reqstr,{method:"GET"});
+	results = await response.json();
+	console.log(results);
+	var carbs, fibre, sodium, sugars, fats, energy;
+	var gi, gl;
+	let serving = results.foods[0].servingSize / (results.foods[0].servingSizeUnit === "g" ? 1 : 250);	//account for the fact that some serving sizes are given in cups (Not very common)
+	for (let i = 0; i < results.foods[0].foodNutrients.length; i = i+1) {
+		if (results.foods[0].foodNutrients[i].nutrientName.includes("Carbohydrate")) {
+			carbs = results.foods[0].foodNutrients[i].value;									//this one is in grams	
+		}
+		else if(results.foods[0].foodNutrients[i].nutrientName.includes("lipid")) {
+			fats = results.foods[0].foodNutrients[i].value;									
+		}
+		else if(results.foods[0].foodNutrients[i].nutrientName.includes("Fiber")) {
+			fibre = results.foods[0].foodNutrients[i].value;
+		}
+		else if(results.foods[0].foodNutrients[i].nutrientName.includes("Sodium")) {
+			sodium = results.foods[0].foodNutrients[i].value/ 1000;							//mg -> grams
+		}
+		else if (results.foods[0].foodNutrients[i].nutrientName.toLowerCase().includes("sugar")) {
+			sugars = results.foods[0].foodNutrients[i].value;							//grams
+		}
+		else if (results.foods[0].foodNutrients[i].nutrientName.toLowerCase().includes("energy")) {
+			energy = results.foods[0].foodNutrients[i].value;
+		}
+	};
+	gi = Math.round(((carbs - fibre)* 65 + (sugars)*25)/carbs);
+	gl = Math.round((gi*carbs)/(serving*100));
+	console.log(gi, gl, carbs, fibre,sodium,sugars,fats,energy);
+	nutritionalInfo = {
+		glycaemicIndex: gi,
+		glycaemicLoad: gl,
+		energy: energy,
+	};
+	return nutritionalInfo;
+}
+async function getFoodData(api_key) {								//params is a key:value list
+	/*
+	const req = new XMLHttpRequest();
+	const uri = "https://api.nal.usda.gov/fdc/v1/foods/search";
+	req.open("GET", uri);									//open request
+	paramstr = new URLSearchParams(params);
+	reqstr = (uri.concat("?",`API_KEY=${api_key}`,"&",paramstr));				//process key:value list and send to server
+	console.log(reqstr);									//the URI generated by this code can be correctly used when clicked in chromium but not otherwise
+	//await promisedClick(document.addEventListener("click", null));			//wait for mouseclick in window
+	req.send(reqstr);
+	req.onload = () => {									//set up event listener (executes upon load)
+		if (req.status == 200) {
+			document.getElementById("output").innerHTML = req.response;		//spit out the response using DOM
+		} 
+		else {										//403 (Forbidden)
+			console.log(`Error: ${req.status} \r\n ${req.response}`);		//spit out an error using the console
+		}
+	}; */
+}
+
+				
+let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
+productName = getProductname();
+nutrients = findNutrients(key,productName);
+setInfoBox(nutrients);
