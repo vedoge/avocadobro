@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Product Name Finder",
-  "version": "1.0",
-  "description": "Scans the current webpage and tells you the product name.",
+  "name": "AvocadoBro",
+  "version": "0.01",
+  "description": "<slogan goes here>",
   "permissions": ["scripting","activeTab"],
   "content_scripts": [
     {
