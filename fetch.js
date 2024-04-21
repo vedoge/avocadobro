@@ -1,4 +1,4 @@
-async function getFoodData(api_key, params) {								//params is a key:value list
+async function getFoodData(api_key) {								//params is a key:value list
 	/*
 	const req = new XMLHttpRequest();
 	const uri = "https://api.nal.usda.gov/fdc/v1/foods/search";
@@ -16,50 +16,57 @@ async function getFoodData(api_key, params) {								//params is a key:value lis
 			console.log(`Error: ${req.status} \r\n ${req.response}`);		//spit out an error using the console
 		}
 	}; */
-	const uri = "https://api.nal.usda.gov/fdc/v1/foods/search";
-	paramstr = new URLSearchParams (params); 
-	reqstr = uri.concat("?",`api_key=${api_key}`,"&",paramstr);
-	console.log(reqstr);
-	var response = await fetch(reqstr,{method:"GET"});
-	results = await response.json();
-	console.log(results);
-	//select 1st entry by default 
-	var carbs, fibre, sodium, sugars, fats, energy;
-	var gi, gl;
-	let serving = results.foods[0].servingSize / (results.foods[0].servingSizeUnit === "g" ? 1 : 250);	//account for the fact that some serving sizes are given in cups (Not very common)
-	for (const nutrient of results.food[0].foodNutrients) {
-		if (nutrient.nutrientName.includes("Carbohydrate")) {
-			carbs = nutrient.value;									//this one is in grams
+	chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+		chrome.runtime.sendMessage(tabs[0].id,{init: true}, async (reply) => {
+		
+		let parameter = {
+			query: reply.name, 
+			dataType: "Branded",
+			pageSize: 1,
+			pageNumber: 1,
+			sortBy: "dataType.keyword",
+			sortOrder: "asc",
+		};
+		const uri = "https://api.nal.usda.gov/fdc/v1/foods/search";
+		paramstr = new URLSearchParams (params); 
+		reqstr = uri.concat("?",`api_key=${api_key}`,"&",paramstr);
+		console.log(reqstr);
+		var response = await fetch(reqstr,{method:"GET"});
+		results = await response.json();
+		console.log(results);
+		var carbs, fibre, sodium, sugars, fats, energy;
+		var gi, gl;
+		let serving = results.foods[0].servingSize / (results.foods[0].servingSizeUnit === "g" ? 1 : 250);	//account for the fact that some serving sizes are given in cups (Not very common)
+		for (let i = 0; i < results.foods[0].foodNutrients.length; i = i+1) {
+			if (results.foods[0].foodNutrients[i].nutrientName.includes("Carbohydrate")) {
+				carbs = results.foods[0].foodNutrients[i].value;									//this one is in grams
+			}
+			else if(results.foods[0].foodNutrients[i].nutrientName.includes("lipid")) {
+				fats = results.foods[0].foodNutrients[i].value;									
+			}
+			else if(results.foods[0].foodNutrients[i].nutrientName.includes("Fiber")) {
+				fibre = results.foods[0].foodNutrients[i].value;
+			}
+			else if(results.foods[0].foodNutrients[i].nutrientName.includes("Sodium")) {
+				sodium = results.foods[0].foodNutrients[i].value/ 1000;							//mg -> grams
+			}
+			else if (results.foods[0].foodNutrients[i].nutrientName.toLowerCase().includes("sugar")) {
+				sugars = results.foods[0].foodNutrients[i].value;							//grams
+			}
+			else if (results.foods[0].foodNutrients[i].nutrientName.toLowerCase().includes("energy")) {
+				energy = results.foods[0].foodNutrients[i].value;
+			}
 		}
-		else if(nutrient.nutrientName.includes("lipid")) {
-			fats = nutrient.value;									
-		}
-		else if(nutrient.nutrientName.includes("Fiber")) {
-			fibre = nutrient.value;
-		}
-		else if(nutrient.nutrientName.includes("Na")) {
-			sodium = nutrient.value/ 1000;							//mg -> grams
-		}
-		else if (nutrient.nutrientName.toLowerCase().includes("sugar")) {
-			sugars = nutrient.value;							//grams
-		}
-		else if (nutrient.nutrientName.toLowerCase().includes("energy")) {
-			energy = nutrient.value;
-		}
-	}
-	gi = ((carbs - fibre)* 70 + (sugars)*30)/carbs;
-	gl = (gi*carbs)/100;
-    
-//Need to select an entry from the provided JSON, extract its nutrient values, and store them as an object. 
-}
+		gi = Math.round(((carbs - fibre)* 65 + (sugars)*25)/carbs);
+		gl = Math.round((gi*carbs)/(serving*100));
+		console.log(gi, gl, carbs, fibre,sodium,sugars,fats,energy);
+		nutritionalInfo = {
+			glycaemicIndex: gi,
+			glycaemicLoad: gl,
+			energy: energy,
+		};
+		chrome.runtime.sendMessage(tabs[0].id,nutritionalInfo);
+	});
+});
 let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
-
-let parameter = {
-	query: "wholemeal bread", 
-	dataType: "Branded",
-	pageSize: 1,
-	pageNumber: 1,
-	sortBy: "dataType.keyword",
-	sortOrder: "asc",
-};
-getFoodData(key, parameter);
+getFoodData(key);
