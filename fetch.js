@@ -1,17 +1,3 @@
-async function fetchNutrientData(apiKey, foodQuery, partialDescription) {
-	const baseUrl = "https://api.nal.usda.gov/fdc/v1/foods/search";
-	const params = new URLSearchParams({
-	  query: foodQuery,
-	  dataType: 'Branded',
-	  pageSize: 25,
-	  pageNumber: 2,
-	  sortBy: 'dataType.keyword',
-	  sortOrder: 'asc',
-	  brandOwner: 'Kar Nut Products Company',
-	  api_key: apiKey
-	});
-}
-
 async function getFoodData(api_key, params) {								//params is a key:value list
 	/*
 	const req = new XMLHttpRequest();
@@ -77,5 +63,3 @@ let parameter = {
 	sortOrder: "asc",
 };
 getFoodData(key, parameter);
-
-

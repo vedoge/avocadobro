@@ -1,9 +1,4 @@
 // some initialisation work - message listener
-// Refactoring- this is now a Chrome content script, which is tied to one tab. 
-// The advantages of this are that the extension can operate on any n open tabs simultaneously without problems. 
-// The disadvantages are the use of message-passing which is complex. 
-// content scraper now listens for message from popup script
-// It then bounces information back to the popup script, which fetches and processes the data from the API
 // (TODO)  the information is then passed back here where it inserts its div into the message box. 
 chrome.runtime.onMessage.addListener(getProductname);
 
@@ -47,6 +42,13 @@ setInfoBox({ glycaemicLoad: 37, glycaemicIndex: 0, sodiumPercent: 0, energyPerce
 			console.error("Product container not found on the webpage.");
 		}
 	}
-	
-	
-
+	// health risks/reccomendation based on glycemic index (simplified)
+function interpretHealthRisks(glycemicIndex) {
+  if (glycemicIndex >= 70) {
+    return " This is high and may contribute to health issues if consumed regularly.";
+  } else if (glycemicIndex >= 55 && glycemicIndex < 70) {
+    return " This is moderate and should be consumed with caution.";
+  } else {
+    return " This is low and is safe for consumption.";
+  }
+}
