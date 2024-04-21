@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "AvocadoBro",
+  "version": "0.01",
+  "description": "<slogan goes here>",
+  "permissions": ["scripting","activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["*://www.amazon.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_assets/icon*": {
+      "16": "assets/icon*16.png",
+      "48": "assets/icon*48.png",
+      "128": "assets/icon*128.png"
+    }
+  }
+}
