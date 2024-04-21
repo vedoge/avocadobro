@@ -1,7 +1,14 @@
-function promisedClick(listener) {
-	return new Promise ( (resolve) => {
-		document.removeEventListener("click", listener);
-		resolve();
+async function fetchNutrientData(apiKey, foodQuery, partialDescription) {
+	const baseUrl = "https://api.nal.usda.gov/fdc/v1/foods/search";
+	const params = new URLSearchParams({
+	  query: foodQuery,
+	  dataType: 'Branded',
+	  pageSize: 25,
+	  pageNumber: 2,
+	  sortBy: 'dataType.keyword',
+	  sortOrder: 'asc',
+	  brandOwner: 'Kar Nut Products Company',
+	  api_key: apiKey
 	});
 }
 
