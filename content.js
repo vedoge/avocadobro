@@ -5,16 +5,19 @@
 // content scraper now listens for message from popup script
 // It then bounces information back to the popup script, which fetches and processes the data from the API
 // (TODO)  the information is then passed back here where it inserts its div into the message box. 
-messageListener = chrome.runtime.onMessage.addListener (getProductName(msg,sender,sendResponse));
-function getProductname(msg, sender, sendResponse) {
-	//msg contains tab.id
-	var productNameElement = document.querySelector('#titleSection #productTitle');
-	var productName = productNameElement ? productNameElement.innerText.trim() : "Product name not found on the webpage.";
-	// Reply to message if chrome.runtime exists
-	next_reply = await sendResponse(productName: productName);
-	setInfoBox(next_reply);
-	return false;
+chrome.runtime.onMessage.addListener(getProductname);
+
+async function getProductname(_, sender, sendResponse) {
+    var productNameElement = document.querySelector('#titleSection #productTitle');
+    var productName = productNameElement ? productNameElement.innerText.trim() : "Product name not found on the webpage.";
+    console.log(productName);
+    sendResponse({ productName });
+    return true; // Return true to indicate that sendResponse will be used asynchronously
 }
+
+// Call setInfoBox with dummy data for testing
+setInfoBox({ glycaemicLoad: 0, glycaemicIndex: 0, sodiumPercent: 0, energyPercent: 0, recVals: { sodium: 0, energy: 0 } });
+
 	// Create and insert a box with text after the title section if titleSection exists
 	// quickSummary is to be calculated in fetch.js after it receives nutritional values from the database. 
 	// The ternary relies on calculating the ratio of sodium:calories and determining if this ratio is high or not. 
