@@ -22,6 +22,7 @@ Rising levels of obesity all around the world is resulting in the prevalence of 
 - Scrapes the webpage to find product details (Currently only on Amazon)
 - Uses the FDA data base to search for nutrients in product
 - Displays the data in a simple-to-understand and wholesome manner
+- NOTE: Enter API Key into appropiate variables
 
 ## Challenges we ran into 😵‍💫
 - Communicating with teammates over different timezones
