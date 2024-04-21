@@ -44,6 +44,7 @@ function getFoodData(api_key, params) {								//params is a key:value list
 	//Need to select an entry from the provided JSON, extract its nutrient values, and store them as an object. 
 }
 let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
+/*
 let parameter = {
 	query: "cheddar cheese", 
 	dataType: "Branded",
@@ -54,4 +55,5 @@ let parameter = {
 	brandOwner: "Kar Nut Products Company"
 };
 getFoodData(key, parameter);
+*/
 
