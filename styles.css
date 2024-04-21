@@ -1,0 +1,8 @@
+.info-box {
+    background-color: rgba(255, 243, 235, 1);
+    border-radius: 10px;
+    padding: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    box-shadow: 0 4px 4px -4px black;
+}

@@ -5,13 +5,4 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       files: ['content.js']
     });
   });
-try {
-	const messageListener = chrome.runtime.onMessage.addListener (
-		(msg, sender, sendReply) => {
-			sender.tab ? 
-				name = msg.productName :
-				throw "Not Implemented Yet";
-			return true;
-		}
-	);
-}
+
