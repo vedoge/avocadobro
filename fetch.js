@@ -29,34 +29,21 @@ function getFoodData(api_key, params) {								//params is a key:value list
 	console.log(reqstr);
 	let response = "";
 	fetch(reqstr,{method:"GET"}).then((req) => {
-			
-		return req.json();
+			response = req.json();
 		}).catch((req) => {
-			//console.log(await req.json());
-			return null;
+			console.log(req.json());
 		});
+	console.log(response.json);
 }
-function productSearch(productName) {
-	let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
-	let data = await getFoodData(key, {
-		query: productName,
-		dataType: "Branded",
-		pageSize: 25,
-		pageNumber: 2,
-		sortBy: "dataType.keyword",
-		sortOrder: "asc",
-		brandOwner: "Kar Nut Products Company"
-	});
-	// loop through nutrients (to be implemented tomorrow) 
-	// calculate glycaemic index as (total mass of simple sugar)*65 + (total mass of carbohydrate - total mass of sugar - total dietary fibre)*60 if the product contains soy before rice, wheat, or potatoes or *70 otherwise. 
-	// Glycaemic load: 50 / (g per 100g of carbohydrate)
-	// Use High GI, high GL as a horrendous benchmark
-	// High GI, Low GL => little cause for concern
-	// Low GI, High GL => Okay in medium portions
-	// Low, Low => no cause for concern
-	// Balance electrolytes - alert to high levels of sodium 
-	// Lipids - alert to high levels of lipids (hyperlipidaemia) 
-	//
-}
-
+let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
+let parameter = {
+	query: "cheddar cheese", 
+	dataType: "Branded",
+	pageSize: 25,
+	pageNumber: 2,
+	sortBy: "dataType.keyword",
+	sortOrder: "asc",
+	brandOwner: "Kar Nut Products Company"
+};
+getFoodData(key, parameter);
 
