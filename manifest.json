@@ -1,10 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "NutriOwl",
-  "description": "Test application - to fetch and dump info as a raw format",
-  "version": "1.0",
+  "name": "AvocadoBro",
+  "version": "0.01",
+  "description": "<slogan goes here>",
+  "permissions": ["scripting","activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["*://www.amazon.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "action": {
-    "default_popup": "index.html",
-    "default_icon": "assets/favicon.png"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
   }
 }
