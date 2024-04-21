@@ -41,6 +41,7 @@ function getFoodData(api_key, params) {								//params is a key:value list
 			console.log(req.json());
 		});
 	console.log(response.json);
+	//Need to select an entry from the provided JSON, extract its nutrient values, and store them as an object. 
 }
 let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
 let parameter = {
