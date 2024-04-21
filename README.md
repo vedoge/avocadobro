@@ -1,9 +1,9 @@
-# hackathon-project
+# AvocadoBro
 ---
 
-### A glycemic index tracker 
-determining the glycemic index of the item via a tabulated database possibly AI, and displaying it as part of the webpage below F&B items
+### An essential companion for all online grocery shopping experiences.
 
+It reminds you of the Source
 ---
 
 ### Api resources
