@@ -37,7 +37,7 @@ def extract_nutrients(food):
     else:
         print("No matching food found based on the description.")
 
-api_key = 'lDuSAPE57aS7jR78F5VNgXC0ETYI7CbPj9qfvCqH'
+api_key = 'key'
 food_query = 'cheddar cheese'
 partial_description = "MILD CHEDDAR SHREDDED CHEESE"
 
