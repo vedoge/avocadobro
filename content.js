@@ -113,6 +113,6 @@ async function getFoodData(api_key) {								//params is a key:value list
 
 				
 let key = "ifCZAscHCiFT5kcgxyDgDv6KW3dHzgnUIsvvFP4W";
-productName = getProductname();
-nutrients = findNutrients(key,productName);
+productName = await getProductname();
+nutrients = await findNutrients(key,productName);
 setInfoBox(nutrients);
